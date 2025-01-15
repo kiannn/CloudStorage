@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+        <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/bootstrap.min.css}"/>
+
+        <title>Home</title> 
+        
+         <style>
+    
+        .msg{ /*Styles defined in .msg will be overriden by @media block when the screen width is 768px or less*/
+             position: absolute;
+             left: 50%;
+             transform: translateX(-50%);
+             font-size: 15px;
+             font-weight: bolder;
+        }
+        @media (max-width: 768px) { 
+             .msg {
+                 left: 30%;
+                 transform: translateX(-40%);
+                 font-size: 14px; /* Slightly smaller for mobile */
+                 top: 5px; /* Adjust for smaller screen */
+                 padding-top: 0;
+                 padding-bottom: 0;
+                 
+            }
+        }
+
+        #waitUploadMessage {
+            font-size: 16px;
+            font-weight: bolder;
+            display: none;
+            text-align: center;
+         }
+         @media(max-width:768px){
+             #waitUploadMessage{                
+                 margin-top: 10px;
+                 font-size: 15px;
+             }            
+         }
+         
+        .waitNoteMessage, 
+        .waitCredMessage {
+            display: none;
+            font-weight: bolder;
+            text-align: center;
+        }   
+        
+        .cred-note-Div-for-waiteMsg{
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 330px; 
+            font-size: 15px;
+            padding-bottom: 5px;
+            padding-top: 3px;
+        }
+        @media(max-width :768px){ /*overrides the .cred-note-Div-for-waiteMsg styles when device width is 768px or less */
+            .cred-note-Div-for-waiteMsg{
+                font-size: 13.5px;
+                gap: 25px;
+                padding-bottom: 4px;
+                padding-top: 2px;
+            }
+        }
+        
+        @media(max-width: 768px){
+            .btn.btn-danger{    /*overrides ride class="btn btn-danger"*/
+                margin-top: 5px;
+            }
+        }
+
+
+        </style>  
+    </head>
+    <body class="p-3 mb-2 bg-light text-black">
+        <div class="container" th:with="n = ${msg!=null}">
+            <div id="logoutDiv" >
+                <form action="#" th:action="@{/logout}" method="POST">
+                    <button type="submit" id="logout-button" class="btn btn-secondary float-right">Logout</button>
+                </form>
+                <span th:if="${n && msg.contains('duplicate')}"id="duplicate"  class="alert alert-warning msg"  th:text="${msg}"></span>
+                <span th:if="${n && msg.contains('successfully')}"id="success" class="alert alert-success msg"  th:text="${msg}"></span>
+                <span th:if="${n && msg.contains('denied')}" id="denied" class="alert alert-danger msg"  th:text="${msg}"></span>
+                 
+            </div>
+            <div id="contentDiv" style="clear: right;">
+                <nav style="clear: right;">
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <a class="nav-item nav-link " id="nav-files-tab" data-toggle="tab" href="#nav-files" role="tab" aria-controls="nav-files" aria-selected="true">Files</a>
+                        <a class="nav-item nav-link" id="nav-notes-tab" data-toggle="tab" href="#nav-notes" role="tab" aria-controls="nav-notes" aria-selected="false">Notes</a>
+                        <a class="nav-item nav-link" id="nav-credentials-tab" data-toggle="tab" href="#nav-credentials" role="tab" aria-controls="nav-credentials" aria-selected="false">Credentials</a>                     
+                    </div>                                     
+                </nav>
+                
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
+                        <form id ="uploadForm" action="#" th:action="@{/files/uploadfile}" enctype="multipart/form-data" method="POST">
+                            <div class="container">
+                                <div class="row" style="margin: 1em;">
+                                    <div class="ml-1 mr-3">
+                                        <label for="fileUpload">Upload a New File :</label>
+                                    </div>
+                                    <div class="mr-3 ml-1">
+                                        <input type="file" onchange="checkFileSize(this)" class="form-control-file" id="fileUpload" name="file_Upload">
+                                        <span style="font-size: 14px; font-family: serif; "> [Max Size 10MB]</span>    
+                                        <div id="msgExceed" style="position: relative; color: red;"></div>
+                                    </div>                              
+                                    <div class="col-md-2">
+                                        <button type="submit" class="btn btn-dark" id="uploadButton" disabled="true">Upload</button>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <span id="waitUploadMessage" class="alert alert-info pb-1 pt-1">Please wait...</span> 
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="table-responsive" style="margin-top: 30px">
+                            <table class="table table-striped" id="fileTable">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 20%" scope="col"></th>
+                                        <th style="width: 80%" scope="col">
+                                            File Name
+                                        </th>
+                                       
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <tr class="fileItems" th:each="file : ${userFiles}">
+                                    <td>
+                                        <a target="_blank" th:href="${'/files/viewfile/'+file.fileId}" th:download="${file.fileName}" class="btn btn-success" style="padding-left: 17px; padding-right: 17px" id="viewFileButton">View</a>
+                                        <a th:href="${'/files/deletefile/'+file.fileId}" class="btn btn-danger"  id="deleteFileButton">Delete</a>
+                                    </td>
+                                    <th scope="row" th:text="${file.fileName}"></th>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-notes" role="tabpanel" aria-labelledby="nav-notes-tab">
+
+                        <div class ="cred-note-Div-for-waiteMsg">
+                            <div>
+                                <span class="waitNoteMessage alert alert-info pb-2 pt-2">Please wait...</span> 
+                            </div>
+                            <button style="margin: 0.25em;" id="add-note-button" type="button" class="btn btn-info" th:attr="onclick=|showNoteModal()|">
+                                + Add a New Note
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="userTable">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 20%" scope="col"></th>
+                                        <th style="width: 20%" scope="col">Title</th>
+                                        <th style="width: 60%" scope="col">Description</th>
+                                    </tr>
+                                </thead>       
+                                <tbody>
+                                    <tr class="noteItems" th:each="note : ${userNotes}">
+                                        <td>                                                                                   
+                                            <button type="button" class="btn btn-success" style="padding-left: 20px; padding-right: 20px" th:id="${'noteEdit'+note.noteId}" th:attr="onclick=|showNoteModal(`${note.noteId}`,`${note.noteTitle}`,`${note.noteDescription}`)|">Edit</button>
+                                            <a th:id="${'noteDelete'+note.noteId}" class="btn btn-danger" th:href="${'/notes/deletenote/'+note.noteId}">Delete</a>
+                                        </td>
+                                        <th scope="row" th:text="${note.noteTitle}"></th>  
+                                        <td class="description-note" th:if="${note.noteDescription.length()<50}" th:text="${note.noteDescription}"></td>
+                                        <td class="description-note" th:unless="${note.noteDescription.length()<50}" th:text="${note.noteDescription.substring(0,50)+'...'}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="modal fade" id="noteModal" tabindex="-1" role="dialog" aria-labelledby="noteModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="noteModalLabel">Note</h5>
+                                        <div style="margin-left: auto; font-weight: bold; text-align: center">
+                                            <span id="waitNoteMessageOnModal" class="alert alert-info pb-1 pt-1 pl-4 pr-4" style="display: none">Please wait...</span> 
+                                        </div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="#" th:action="@{/notes/add-update}" method="POST">
+                                            <input type="hidden" name="noteId" id="note-id">
+                                            <div class="form-group">
+                                                <label for="note-title" class="col-form-label">Title</label>
+                                                <input type="text" name="noteTitle" class="form-control" id="note-title" maxlength="40" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="note-description" class="col-form-label">Description</label>
+                                                <textarea class="form-control" name="noteDescription" id="note-description" rows="5" maxlength="1000" required></textarea>
+                                            </div>
+                                            <button id="noteSubmit" type="submit" class="d-none"></button>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" id="closeEditeModal"class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="button" id="submitNote" class="btn btn-primary" onclick="$('#noteSubmit').click();">Save changes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-credentials" role="tabpanel" aria-labelledby="nav-credentials-tab">
+                        <div class="cred-note-Div-for-waiteMsg">
+                            <div>
+                                <span class="waitCredMessage alert alert-info pb-2 pt-2">Please wait...</span> 
+                            </div>
+                            <button id="add-cred-button" type="button" class="btn btn-info m-1" onclick="showCredentialModal()">
+                                + Add a New Credential
+                            </button>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-striped"  id="credentialTable">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 20%" scope="col"></th>
+                                        <th style="width: 35%" scope="col">URL</th>
+                                        <th style="width: 20%" scope="col">Username</th>
+                                        <th style="width: 25%" scope="col">Password</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <tr class="CredItems" th:each="cred : ${userCredentials}" th:with="length=${50}, len=${30}">
+                                    <td class="CredEditButtom">
+                                        <button type="button" 
+                                                class="btn btn-success" style="padding-left: 20px; padding-right: 20px"
+                                                th:id="${'credEdit'+cred.credentialId}"
+                                                th:attr="onclick=|showCredentialModal(`${cred.credentialId}`,`${cred.url}`,`${cred.username}`,`${cred.password}`)|">Edit</button>
+                                        <a class="btn btn-danger" th:id="${'credDelete'+cred.credentialId}" th:href="${'/credentials/deletecredentials/'+cred.credentialId}">Delete</a>
+                                    </td> 
+                                    <th scope="row" th:if="${cred.url.length()<length}"th:text="${cred.url}"></th>
+                                    <th scope="row" th:unless="${cred.url.length()<length}"th:text="${cred.url.substring(0,length)+'...'}"></th>
+                                    <td id="credUsername" th:text="${cred.username}"></td>
+                                    <td id="encoded-password" th:if="${cred.encodedPassword.length()<len}" th:text="${cred.encodedPassword}"></td>
+                                    <td id="encoded-password" th:unless="${cred.encodedPassword.length()<len}" th:text="${cred.encodedPassword.substring(0,len)+'...'}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="modal fade" id="credentialModal" tabindex="-1" role="dialog" aria-labelledby="credentialModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="credentialModalLabel">Credential</h5>
+                                        <div  style="margin-left: auto; font-weight: bold; text-align: center">
+                                            <span id="waitCredMessageOnModal" class="alert alert-info pb-1 pt-1 pl-4 pr-4" style="display: none">Please wait...</span> 
+                                        </div>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="#" th:action="@{/credentials/add-update}" method="POST">
+                                            <input type="hidden" name="credentialId" id="credential-id">
+                                            <div class="form-group">
+                                                <label for="credential-url" class="col-form-label">URL</label>
+                                                <input type="text" name= "url" class="form-control" id="credential-url" maxlength="100" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="credential-username" class="col-form-label">Username</label>
+                                                <input type="text" name= "username" class="form-control" id="credential-username" maxlength="30" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="credential-password" class="col-form-label">Password</label>
+                                                <input type="text" name= "password" class="form-control" id="credential-password" maxlength="30" required>
+                                            </div>
+                                            <button id="credentialSubmit" type="submit" class="d-none"></button>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" id="closeCredEditeModal" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="button" id="credSubmit" class="btn btn-primary" onclick="$('#credentialSubmit').click();">Save changes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script th:src="@{/js/jquery-slim.min.js}"></script>
+        <script th:src="@{/js/popper.min.js}"></script>
+        <script th:src="@{/js/bootstrap.min.js}"></script>
+
+<script type="text/javascript">
+            // For opening the note modal
+            function showNoteModal(noteId, noteTitle, noteDescription) {
+              $('#note-id').val(noteId ? noteId : '');
+              $('#note-title').val(noteTitle ? noteTitle : '');
+              $('#note-description').val(noteDescription ? noteDescription : '');
+              $('#noteModal').modal('show');
+            }
+
+            // For opening the credentials modal
+            function showCredentialModal(credentialId, url, username, password) {
+                $('#credential-id').val(credentialId ? credentialId : '');
+                $('#credential-url').val(url ? url : '');
+                $('#credential-username').val(username ? username : '');
+                $('#credential-password').val(password ? password : '');
+                $('#credentialModal').modal('show');
+            }
+              
+            //For remaining on the same tab after delete/edit/upload/add
+            $(document).ready(function() {
+                // Save the active tab to localStorage when a tab is shown
+                $('a[data-toggle="tab"]').on('show.bs.tab', function(e) {
+                    localStorage.setItem('lasttab', $(e.target).attr('href'));
+                });
+
+                // Restore the last active tab on page load
+                var activeTab = localStorage.getItem('lasttab');
+                if (activeTab) {
+                    $('#nav-tab a[href="'+activeTab+'"]').tab('show');
+                }else {
+	            $('#nav-tab a[href="#nav-files"]').tab('show');
+                     }
+                           
+            });
+ 
+            //For checking the file size, display error if exceeds
+            function checkFileSize(input) {
+                
+                  const maxSizeInBytes = 10.5 * 1024 * 1024;
+                  const file = input.files[0];
+                  const upB = document.getElementById('uploadButton');
+                  
+                  if (file.size > maxSizeInBytes) {
+                      
+                      input.value='';
+                      
+                      const exceed = document.getElementById('msgExceed');
+                      exceed.style.display ="block";
+                      exceed.innerHTML = 'File size too large !';
+
+                      setTimeout(function(){exceed.style.display = 'none';},5000);
+
+                      upB.disabled = true;
+                      
+                  } else{
+                      
+                      upB.disabled = false;
+                  }
+            }
+            
+            //Set a timer on massages to be displayed only for 5 seconds
+            setTimeout(function(){ 
+              (document.getElementById("denied")||
+               document.getElementById("success")||
+               document.getElementById("duplicate")
+               ).style.display = "none"; }, 5000);
+   
+    
+            // Upload form
+            const uploadForm = document.getElementById('uploadForm');
+            
+            // Buttons on upload tab
+            const uploadButton = document.getElementById('uploadButton');         
+            const deleteFileButton = document.querySelectorAll('#deleteFileButton');
+            const viewFileButton = document.querySelectorAll('#viewFileButton');
+            const waitUploadMessage = document.getElementById('waitUploadMessage');
+            uploadForm.addEventListener('submit', function () {
+
+                disableUploadElements('upload');
+             });
+              
+            deleteFileButton.forEach((deleteb)=> deleteb.addEventListener('click', function () {
+ 
+                disableUploadElements('del');
+            }));
+              
+            viewFileButton.forEach((viewb) => viewb.addEventListener('click', function () {       
+                disableUploadElements('view');
+            }));
+  
+            function disableUploadElements(action) {
+                  
+                  // Disable the upload, delete and view buttons and show wait message
+                  uploadButton.disabled = true;
+                  deleteFileButton.forEach((deleteb) => deleteb.style="pointer-events: none");
+                  viewFileButton.forEach((viewb) => viewb.style="pointer-events: none");
+                  waitUploadMessage.style.display = "block";
+                  
+                if(action ==='view'){               
+                    waitUploadMessage.style.display = "block";
+                    
+                    setTimeout(function(){
+                        
+                        waitUploadMessage.style.display = 'none';
+                        deleteFileButton.forEach((deleteb) => deleteb.style="pointer-events: auto");
+                        viewFileButton.forEach((viewb) => viewb.style="pointer-events: auto");
+                        },1200);              
+                }
+            };
+            
+            
+            //Buttons on note modal and tap   
+            const saveNote = document.getElementById('submitNote');
+            const deleteNotes = document.querySelectorAll("tr.noteItems a");
+            const editNotes = document.querySelectorAll("tr.noteItems button");
+            const addNoteButton = document.getElementById('add-note-button');
+            const waitNoteMessageOnModal = document.getElementById('waitNoteMessageOnModal');
+            const waitNoteMessage = document.getElementsByClassName('waitNoteMessage');
+            saveNote.addEventListener('click', function () {
+                
+               const noteTitleText = document.getElementById('note-title').value; 
+               const noteDescriptionText = document.getElementById('note-description').value;
+               if(noteTitleText!=="" && noteDescriptionText!==""){
+                    saveNote.disabled = true;
+                    waitNoteMessageOnModal.style.display="inline";
+                }
+             });
+             deleteNotes.forEach((deleteB) => deleteB.addEventListener('click', function (){
+                 
+                 deleteNotes.forEach((deleteB) => deleteB.style="pointer-events: none");
+                 editNotes.forEach((editB) => editB.disabled = true);
+                 addNoteButton.disabled = true;
+                 waitNoteMessage[0].style.display ="inline";
+             }));
+
+             
+             //Buttons on cred modal and tap
+            const saveCred = document.getElementById('credSubmit');
+            const deleteCreds = document.querySelectorAll("tr.CredItems a");
+            const editCreds = document.querySelectorAll("tr.CredItems button");
+            const addCredButton = document.getElementById('add-cred-button');
+            const waitCredMessageOnModal = document.getElementById('waitCredMessageOnModal');
+            const waitCredMessage = document.getElementsByClassName('waitCredMessage');
+            saveCred.addEventListener('click', function () {
+                
+               const credentialUrlText = document.getElementById('credential-url').value; 
+               const credentialUsernameText = document.getElementById('credential-username').value;
+               const credentialPasswordText = document.getElementById('credential-password').value;
+
+               if(credentialUrlText!=="" && credentialUsernameText!=="" && credentialPasswordText!==""){
+                    saveCred.disabled = true;
+                    waitCredMessageOnModal.style.display="inline";
+                }
+             });
+             deleteCreds.forEach((deleteB) => deleteB.addEventListener('click', function (){
+                 
+                 deleteCreds.forEach((deleteB) => deleteB.style="pointer-events: none");
+                 editCreds.forEach((editB) => editB.disabled = true);
+                 addCredButton.disabled = true;
+                 waitCredMessage[0].style.display ="inline";
+             }));
+
+
+            
+</script> 
+    
+    </body>
+</html>

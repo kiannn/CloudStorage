@@ -1,0 +1,8 @@
+A secure and user-friendly cloud storage application using Spring Boot with Spring MVC, Spring Security, and MyBatis for backend functionality. The frontend was built with Thymeleaf and enhanced with JavaScript for interactivity.
+
+Key features include:
+
+Secure user authentication and account management.
+File upload, download, and management capabilities.
+Adding, editing, and deleting notes and website credentials.
+Real-time success and error messaging for all user actions.

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+        <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/bootstrap.min.css}"/>
+
+        <title>Login</title>
+        <style>
+
+            .custom-w {
+                width: 30%; /* Full width for smaller screens */
+            }
+            @media (max-width: 768px) {
+                .custom-w {
+                    width: 100%;
+                }
+            }
+            
+            @media (max-width: 768px) {
+              #success-msg { /*applies the given styles to element with id 'success-msg' when screen size is 768px or less*/
+                 font-size: 14px;
+                 top: 2px; 
+              }
+            }
+
+            
+        </style>
+    </head>
+    <body class="p-3 mb-2 bg-light text-black">
+        <div class="custom-w container justify-content-cente p-3" style="line-height: 15px; background-color: #eeeeee; margin-top: 5em;">
+            <h3 class="display-5 mb-4 text-center">Login</h3>
+            <form action="#" th:action="@{/login}" method="POST">
+                <div class="alert alert-danger text-center" th:if="${param.error}">
+                    Invalid username or password
+                </div>
+                <div class="alert alert-warning text-center" th:if="${param.logout}">
+                    You have been logged out
+                </div>
+                <div id="success-msg" style="line-height: 20px;" class="alert alert-success" th:if="${param.sigUpSuccess}">
+                    You successfully signed up! Please continue to login.
+                </div>
+                <div class="form-group">
+                    <label for="inputUsername">Username</label>
+                    <input type="input" class="form-control" name="username" id="inputUsername" placeholder="Enter Username" maxlength="20" required>
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword">Password</label>
+                    <input type="password" class="form-control" name="password" id="inputPassword" placeholder="Enter Password" maxlength="40" required>
+                </div> 
+                <!--  <input type="text" name="_csrf" th:value="${_csrf.token}" class="d-none"/> -->
+                <button type="submit" class="btn btn-primary" id="login-button">Login</button>
+            </form>
+
+            <div class="form-group" style="margin-top: 1.9em;">
+                <label>Click <a href="/signup">here</a> to sign up</label>
+            </div>
+           
+        </div>
+    </body>
+</html>

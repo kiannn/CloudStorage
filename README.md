@@ -6,8 +6,8 @@ CloudStorage provides a secure and user-friendly cloud storage application for f
 - **Secure Authentication:** User authentication with **Spring Security**.
 - **File Management:** Upload, download, and manage files securely, with real-time validation for duplicate file names.
 - **Note Management:** Add, edit, and delete personal notes.
-- **Credential Management:** Store and manage website credentials securely, with passwords encoded using the `Base64 encoding scheme` for display.
-- **Password Encoding:** User account passwords are encoded using the `Base64 encoding scheme` for added security.
+- **Credential Management:** Store and manage website credentials securely, with passwords encoded using the `Base64` encoding scheme for display.
+- **Password Encoding:** User account passwords are encoded using the `Base64` encoding scheme for added security.
 - **Real-Time Feedback:** Success and error messages for all user actions.
 - **Password Validation:** Enforces password length limit and pattern (minimum 8 characters, no spaces).
 
@@ -44,7 +44,7 @@ CloudStorage provides a secure and user-friendly cloud storage application for f
    - Implements **Spring Security** for user authentication.
    - Utilizes a custom **AuthenticationProvider** for handling authentication logic.
 2. **Password Encoding:**
-   - User account passwords are persisted into the database after encoding with the **Base64 encoding scheme**.
+   - User account passwords are persisted into the database after encoding with the **Base64** encoding scheme.
    - Website credentials (specifically passwords) are encoded with Base64 when displayed to users. When users edit website credentials, the original password is presented in its decoded form.
 3. **Frontend Interactivity:**
    - Built with **Thymeleaf** for integration with backend data.

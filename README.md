@@ -48,9 +48,9 @@ CloudStorage provides a secure and user-friendly cloud storage application for f
    - Website credentials (specifically passwords) are encoded with Base64 when displayed to users. When users edit website credentials, the original password is presented in its decoded form.
 3. **Frontend Interactivity:**
    - Built with **Thymeleaf** for integration with backend data.
-   - Enhanced with **JavaScript** to provide real-time user feedback and interactivity.
+   - Enhanced with **JavaScript** to provide real-time feedback and interactivity.
 4. **File Storage and Management:**
-   - Files are stored securely and linked to the user account.
+   - Files are stored and linked to the user account.
    - Duplicate file names are rejected during the upload process to ensure data consistency.
    - File size greater than 10 MB are rejected for upload.
 5. **Validation:**

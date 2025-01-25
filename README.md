@@ -55,3 +55,7 @@ CloudStorage is a secure and user-friendly application for managing files, notes
 5. **Validation:**
    - Passwords must meet security patterns (minimum 8 characters, no spaces) during signup.
    - Real-time feedback for errors such as invalid inputs or duplicate uploads.
+ ## Contact
+ - Email: kpourd@gmail.com
+ - GitHub Profile: https://github.com/kiannn/CloudStorage
+ - Live Demo: https://cloudstorage-production-version.up.railway.app/login

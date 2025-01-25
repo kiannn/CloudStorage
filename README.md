@@ -1,6 +1,5 @@
 ## About the Project
-
-CloudStorage provides a secure and user-friendly cloud storage application for file, notes and website credentials management. By integrating backend functionality with a dynamic frontend, it allows users to upload, download, and view files effortlessly. The application also includes features for managing personal notes and website credentials. Security is applied through secure user authentication and real-time validation.
+CloudStorage is a secure and user-friendly application for managing files, notes, and website credentials. It enables file uploads, downloads, and management while offering note and credential handling. Authentication and real-time validation is apllied to provide security. 
 
 ## Key Features:
 - **Secure Authentication:** User authentication with **Spring Security**.

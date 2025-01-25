@@ -44,7 +44,7 @@ CloudStorage is a secure and user-friendly application for managing files, notes
    - Utilizes a custom **AuthenticationProvider** for handling authentication logic.
 2. **Password Encoding:**
    - User account passwords are persisted into the database after encoding with the **Base64** encoding scheme.
-   - Website credentials (specifically passwords) are encoded with Base64 when displayed to users. When users edit website credentials, the original password is presented in its decoded form.
+   - Website credentials (specifically passwords) are encoded with **Base64** when displayed to users. When users edit website credentials, the original password is presented in its decoded form.
 3. **Frontend Interactivity:**
    - Built with **Thymeleaf** for integration with backend data.
    - Enhanced with **JavaScript** to provide real-time feedback and interactivity.

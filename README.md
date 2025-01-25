@@ -50,7 +50,7 @@ CloudStorage is a secure and user-friendly application for managing files, notes
    - Enhanced with **JavaScript** to provide real-time feedback and interactivity.
 4. **File Storage and Management:**
    - Files are stored and linked to the user account.
-   - Duplicate file names are rejected during the upload process to ensure data consistency.
+   - Duplicate file names are rejected during the upload process for data consistency.
    - File size greater than 10 MB are rejected for upload.
 5. **Validation:**
    - Passwords must meet security patterns (minimum 8 characters, no spaces) during signup.

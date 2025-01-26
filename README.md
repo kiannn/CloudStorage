@@ -12,11 +12,12 @@ CloudStorage is a secure and user-friendly application for managing files, notes
 
 ## Built With
 
-- **Spring Boot** (Spring MVC, Spring Security)  
-- **MyBatis for ORM mapping**  
-- **Thymeleaf**  
-- **JavaScript**  
-- **CSS/HTML**  
+- Spring Boot (Spring MVC, Spring Security)  
+- MyBatis for ORM mapping
+- Thymeleaf
+- MySQL
+- JavaScript  
+- CSS/HTML  
 
 ## Usage
 

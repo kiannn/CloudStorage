@@ -422,7 +422,7 @@
              });
              deleteNotes.forEach((deleteB) => deleteB.addEventListener('click', function (){
                  
-                 deleteNotes.forEach((deleteB) => deleteB.style="pointer-events: none");
+                 deleteNotes.forEach((deleteB) => deleteB.className="btn btn-danger disabled");
                  editNotes.forEach((editB) => editB.disabled = true);
                  addNoteButton.disabled = true;
                  waitNoteMessage[0].style.display ="inline";

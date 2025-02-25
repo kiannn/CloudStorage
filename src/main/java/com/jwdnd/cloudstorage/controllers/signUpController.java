@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -19,7 +20,7 @@ public class signUpController {
     UserService UserService;
 
     @GetMapping
-    public String signUpPage(User user) {
+    public String signUpPage(@ModelAttribute("us") User user) {
 
         return "signup";
 
@@ -28,6 +29,12 @@ public class signUpController {
     @PostMapping
     public String signUpProcess(User User, ModelMap ModelMap) {
      
+        System.out.println("getFirstName()" + User.getFirstName());
+        System.out.println("getLastName()" + User.getLastName());
+        System.out.println("getPassword()" + User.getPassword());
+        System.out.println("getSalt()" + User.getSalt());
+        System.out.println("getUserName()" + User.getUserName());
+        
         boolean userExist = UserService.userExist(User.getUserName());
 
         if (!userExist) {

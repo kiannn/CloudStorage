@@ -27,7 +27,7 @@ public class signUpController {
     }
 
     @PostMapping
-    public String signUpProcess(User User, ModelMap ModelMap) {
+    public String signUpProcess(@ModelAttribute("us")User User, ModelMap ModelMap) {
      
         System.out.println("getFirstName()" + User.getFirstName());
         System.out.println("getLastName()" + User.getLastName());

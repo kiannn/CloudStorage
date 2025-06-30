@@ -24,7 +24,7 @@ public class signUpController {
 
         return "signup";
 
-    }
+    } 
 
     @PostMapping
     public String signUpProcess(@ModelAttribute("us")User User, ModelMap ModelMap) {

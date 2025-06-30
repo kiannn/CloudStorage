@@ -369,7 +369,11 @@
             const deleteFileButton = document.querySelectorAll('#deleteFileButton');
             const viewFileButton = document.querySelectorAll('#viewFileButton');
             const waitUploadMessage = document.getElementById('waitUploadMessage');
-            uploadForm.addEventListener('submit', function () {
+            const file_Upload = document.getElementsByName('file_Upload');
+            uploadForm.addEventListener('submit', function () { // If instead of uploadForm.addEventListener('submit', function (){}) 
+                                                                  // we use uploadButton.addEventListener('submit', function (){})
+                                                                  // which is apply 'submit' event on the submit button instead of the form element
+                                                                  // then addEventListener will not work.
 
                 disableUploadElements('upload');
              });
@@ -389,20 +393,23 @@
                   uploadButton.disabled = true;
                   deleteFileButton.forEach((deleteb) => deleteb.style="pointer-events: none");
                   viewFileButton.forEach((viewb) => viewb.style="pointer-events: none");
+                
+                  if(action !== 'view'){ 
+                      file_Upload[0].addEventListener("click", function (e) {
+                              e.preventDefault(); // Prevent file picker from opening
+                          });
+                  }
+                  
                   waitUploadMessage.style.display = "block";
                   
-                if(action ==='view'){               
-                    waitUploadMessage.style.display = "block";
-                    
+                  if(action ==='view'){                                   
                     setTimeout(function(){
-                        
                         waitUploadMessage.style.display = 'none';
                         deleteFileButton.forEach((deleteb) => deleteb.style="pointer-events: auto");
                         viewFileButton.forEach((viewb) => viewb.style="pointer-events: auto");
                         },1200);              
-                }
+                 }
             };
-            
             
             //Buttons on note modal and tap   
             const saveNote = document.getElementById('submitNote');

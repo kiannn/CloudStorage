@@ -40,7 +40,7 @@ public class HomeController {
     public String homePage(ModelMap ModelMap, HttpServletRequest HttpServletRequest) {
 
         String referer = HttpServletRequest.getHeader("Referer");
-        System.out.println("com.jwdnd.cloudstorage.controllers.HomeController.homePage() "+referer);
+        System.out.println("referer in HomeController.homePage() "+referer);
         if (referer != null && referer.contains("login")) {
             ModelMap.remove("msg");
         }

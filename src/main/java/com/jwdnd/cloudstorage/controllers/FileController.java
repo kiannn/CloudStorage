@@ -1,7 +1,6 @@
 package com.jwdnd.cloudstorage.controllers;
 
 import com.jwdnd.cloudstorage.Model.Files;
-import com.jwdnd.cloudstorage.services.CompressionService;
 import com.jwdnd.cloudstorage.services.FileService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -37,7 +36,7 @@ public class FileController {
 
         String msg = "";
 
-        if (!file_Upload.isEmpty() && msg.isEmpty()) {
+        if (!file_Upload.isEmpty()) {
 
             String name = (String) ModelMap.getAttribute("authorizedUser");
             boolean duplicate = FileService.isDuplicate(file_Upload, name);

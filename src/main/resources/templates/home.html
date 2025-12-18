@@ -393,15 +393,13 @@
                   uploadButton.disabled = true;
                   deleteFileButton.forEach((deleteb) => deleteb.style="pointer-events: none");
                   viewFileButton.forEach((viewb) => viewb.style="pointer-events: none");
-                
+                  waitUploadMessage.style.display = "block";
+                  
                   if(action !== 'view'){ 
                       file_Upload[0].addEventListener("click", function (e) {
                              file_Upload[0].disabled =true;  //  e.preventDefault(); could also be used instead of file_Upload[0].disabled =true, e.preventDefault() prevents file picker from opening.
                           });                     
-
-                  waitUploadMessage.style.display = "block";
-                  
-                  if(action ==='view'){                                   
+                      } else{                                   
                     setTimeout(function(){
                         waitUploadMessage.style.display = 'none';
                         deleteFileButton.forEach((deleteb) => deleteb.style="pointer-events: auto");

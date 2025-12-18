@@ -393,19 +393,12 @@
                   uploadButton.disabled = true;
                   deleteFileButton.forEach((deleteb) => deleteb.style="pointer-events: none");
                   viewFileButton.forEach((viewb) => viewb.style="pointer-events: none");
-                //file_Upload[0].disabled =true;
+                
                   if(action !== 'view'){ 
                       file_Upload[0].addEventListener("click", function (e) {
-                             file_Upload[0].disabled =true;  // Prevents file picker from opening.
-                          });                     // If file_Upload[0].disabled =true; is used instead of preventDefault()
-                  }                               // then we get :  
-                                                  //    java.lang.NullPointerException: Cannot invoke "org.springframework.web.multipart.MultipartFile.isEmpty()" 
-                                                  //    because "fileUpl" is null]
-                                                  // So in thcd cdis case the controller method's MultipartFile parameter 'fileUpl' will set to null at the time of form submission.
-                                                  // This happens because the JavaScript submit event handler runs first, then the form is submitted to the server (Your listener runs before the HTTP request is sent).
-                                                  // The <input type="file"> gets disabled before the browser sends the request to controller method.
-                                                  
-                  
+                             file_Upload[0].disabled =true;  //  e.preventDefault(); could also be used instead of file_Upload[0].disabled =true, e.preventDefault() prevents file picker from opening.
+                          });                     
+
                   waitUploadMessage.style.display = "block";
                   
                   if(action ==='view'){                                   

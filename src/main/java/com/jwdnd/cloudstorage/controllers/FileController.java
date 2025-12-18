@@ -32,21 +32,21 @@ public class FileController {
     HomeController HomeController;
 
     @PostMapping("uploadfile")
-    public String uploadFile(MultipartFile file_Upload, ModelMap ModelMap, @Value("${base.url}") String base) throws IOException {
-
+    public String uploadFile(MultipartFile fileUpl, ModelMap ModelMap, @Value("${base.url}") String base) throws IOException {
+ 
         String msg = "";
 
-        if (!file_Upload.isEmpty()) {
+        if (!fileUpl.isEmpty()) {
 
             String name = (String) ModelMap.getAttribute("authorizedUser");
-            boolean duplicate = FileService.isDuplicate(file_Upload, name);
+            boolean duplicate = FileService.isDuplicate(fileUpl, name);
 
-            msg = file_Upload.getOriginalFilename();
+            msg = fileUpl.getOriginalFilename();
             msg = msg.length() < 20 ? msg : msg.substring(0, 20) + "...";
             
             if (!duplicate) {
 
-                FileService.addFile(file_Upload, name);
+                FileService.addFile(fileUpl, name);
             }
            
             msg = !duplicate ? "File name  " + msg + " uploaded successfully !"

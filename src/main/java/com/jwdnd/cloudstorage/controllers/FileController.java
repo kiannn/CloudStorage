@@ -1,5 +1,6 @@
 package com.jwdnd.cloudstorage.controllers;
 
+import com.jwdnd.cloudstorage.Model.FileDownload;
 import com.jwdnd.cloudstorage.Model.Files;
 import com.jwdnd.cloudstorage.services.FileService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -72,7 +73,7 @@ public class FileController {
         
         if (validFileId && !reject) {
             
-            Files viewFile = FileService.viewFile(fileId);
+            FileDownload viewFile = FileService.viewFile(fileId);
             ResponseEntity<byte[]> response = ResponseEntity.status(HttpStatus.OK)
                                                             .contentType(MediaType.valueOf(viewFile.getContentType()))
                                                             .body(viewFile.getFileData());
@@ -94,8 +95,7 @@ public class FileController {
 
         if (validFileId && !reject) {
             String msg;
-            Files deletedFile = FileService.deleteFile(fileId);
-            msg = deletedFile.getFileName();
+            msg = FileService.deleteFile(fileId);
             msg = msg.length() < 20 ? msg : msg.substring(0, 20) + "...";
             msg = "File name  " + msg + "  deleted successfully !";
 

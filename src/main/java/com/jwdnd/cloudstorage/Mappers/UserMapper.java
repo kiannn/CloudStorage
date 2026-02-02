@@ -1,6 +1,7 @@
 package com.jwdnd.cloudstorage.Mappers;
 
 import com.jwdnd.cloudstorage.Model.User;
+import com.jwdnd.cloudstorage.Model.UserCredentials;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
@@ -14,7 +15,10 @@ public interface UserMapper {
     @Options(useGeneratedKeys = true, keyProperty = "userid")
     public Integer addUser(User build);
 
-    @Select("SELECT * FROM USERS1 WHERE username = #{username}")
-    public User getUserByUserName(String username);
+    @Select("SELECT userid FROM USERS1 WHERE username = #{username}")   
+    public Integer getUserIdByUserName(String username);
+    
+    @Select("SELECT password, salt FROM USERS1 WHERE username = #{username}")   
+    public UserCredentials getUserCredByUserName(String username);
 
 }

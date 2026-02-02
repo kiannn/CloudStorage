@@ -26,9 +26,9 @@ public class CredentialService {
             
     public List<Credentials> getAllCredentials(String user) {
 
-        User userByUserName = UserMapper.getUserByUserName(user);
+        Integer userByUserName = UserMapper.getUserIdByUserName(user);
 
-        List<Credentials> allCredential = CredentialsMapper.findAllCredentials(userByUserName.getUserid());
+        List<Credentials> allCredential = CredentialsMapper.findAllCredentials(userByUserName);
 
         allCredential.forEach(cred -> {
             String decryptValue = EncryptionService.decryptValue(cred.getEncodedPassword(), cred.getKeyEnc());
@@ -77,7 +77,7 @@ public class CredentialService {
 
     public void addCredential(Credentials Credentials, String name) {
         
-        User userByUserName = UserMapper.getUserByUserName(name);
+        Integer userByUserName = UserMapper.getUserIdByUserName(name);
         
         String password = Credentials.getPassword();
         String generatedEncodedKey = generateEncodedKey();
@@ -89,7 +89,7 @@ public class CredentialService {
                                        .username(Credentials.getUsername())
                                        .encodedPassword(encryptedPassword)
                                        .keyEnc(generatedEncodedKey)
-                                       .userId(userByUserName.getUserid())
+                                       .userId(userByUserName)
                                        .build();
  
         CredentialsMapper.addCredential(build);

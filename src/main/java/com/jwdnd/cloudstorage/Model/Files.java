@@ -1,6 +1,5 @@
 package com.jwdnd.cloudstorage.Model;
 
-import jakarta.persistence.Lob;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +14,8 @@ public class Files {
     String contentType ;
     String fileSize ;
     Integer userId ;
-    @Lob 
+    
+    // Stored as MEDIUMBLOB in DB 
     byte[] fileData ;
     
 }

@@ -21,15 +21,15 @@ public class NoteService {
      
     public List<Notes> getAllNotes(String username) {
 
-        User user = UserMapper.getUserByUserName(username);
-        List<Notes> allNotes = NotesMapper.getAllNotes(user.getUserid());
+        Integer user = UserMapper.getUserIdByUserName(username);
+        List<Notes> allNotes = NotesMapper.getAllNotes(user);
 
         return allNotes;
     }
 
     public void addNote(Notes Note, String name) {
  
-        User userByUserName = UserMapper.getUserByUserName(name);
+        Integer userByUserName = UserMapper.getUserIdByUserName(name);
 
         Notes build = Notes.builder()
                            .noteDescription(Note.getNoteDescription())
@@ -38,7 +38,7 @@ public class NoteService {
 //                                  .replace("'", "\'")
 //                                  .trim())
                            .noteTitle(Note.getNoteTitle())
-                           .userId(userByUserName.getUserid())
+                           .userId(userByUserName)
                            .build();
 
        NotesMapper.addNote(build); 

@@ -3,6 +3,7 @@ package com.jwdnd.cloudstorage.services;
 
 import com.jwdnd.cloudstorage.Mappers.UserMapper;
 import com.jwdnd.cloudstorage.Model.User;
+import com.jwdnd.cloudstorage.Model.UserCredentials;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -26,7 +27,7 @@ public class AuthenticationService implements AuthenticationProvider {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
-        User user = userMapper.getUserByUserName(username); 
+        UserCredentials user = userMapper.getUserCredByUserName(username); 
         
         if (user != null) {
             String encodedSalt = user.getSalt();

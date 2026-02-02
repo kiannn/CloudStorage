@@ -39,17 +39,10 @@ public class UserService {
 
     public boolean userExist(String username) {
 
-        User usernameExsit = UserMapper.getUserByUserName(username);
+        Integer usernameExsit = UserMapper.getUserIdByUserName(username);
         boolean exist = usernameExsit==null;
         
         return exist;
 
-    }
-    
-    public User findUserByUserName(String username){
-    
-        User userByUserName = UserMapper.getUserByUserName(username);
-        
-        return userByUserName;
     }
 }

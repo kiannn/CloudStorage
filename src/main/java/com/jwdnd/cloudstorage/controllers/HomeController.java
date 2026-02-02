@@ -3,6 +3,7 @@ package com.jwdnd.cloudstorage.controllers;
 import com.jwdnd.cloudstorage.services.NoteService;
 import com.jwdnd.cloudstorage.services.CredentialService;
 import com.jwdnd.cloudstorage.Model.Credentials;
+import com.jwdnd.cloudstorage.Model.FileMetadata;
 import com.jwdnd.cloudstorage.Model.Files;
 import com.jwdnd.cloudstorage.Model.Notes;
 import com.jwdnd.cloudstorage.services.FileService;
@@ -56,7 +57,7 @@ public class HomeController {
 
         String user = (String) ModelMap.getAttribute("authorizedUser");
 
-        List<Files> allFiles = FileService.getAllFiles(user);
+        List<FileMetadata> allFiles = FileService.getAllFiles(user);
         List<Notes> allNotes = NoteService.getAllNotes(user);
         Collection<Credentials> allCredentials = CredentialsService.getAllCredentials(user);
 

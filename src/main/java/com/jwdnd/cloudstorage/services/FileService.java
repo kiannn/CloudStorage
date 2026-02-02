@@ -2,6 +2,8 @@ package com.jwdnd.cloudstorage.services;
 
 import com.jwdnd.cloudstorage.Mappers.FileMapper;
 import com.jwdnd.cloudstorage.Mappers.UserMapper;
+import com.jwdnd.cloudstorage.Model.FileDownload;
+import com.jwdnd.cloudstorage.Model.FileMetadata;
 import com.jwdnd.cloudstorage.Model.Files;
 import com.jwdnd.cloudstorage.Model.User;
 import java.io.IOException;
@@ -23,18 +25,18 @@ public class FileService {
     @Autowired
     CompressionService CompressionService;
 
-    public List<Files> getAllFiles(String username) {
+    public List<FileMetadata> getAllFiles(String username) {
         
-        User user = UserMapper.getUserByUserName(username);
-        List<Files> allFiles = FileMapper.getAllFiles(user.getUserid());
+        Integer user = UserMapper.getUserIdByUserName(username);
+        List<FileMetadata> allFiles = FileMapper.getAllFiles(user);
 
         return allFiles;
         
     }
     
-   public Files deleteFile(Integer fileId) {
+   public String deleteFile(Integer fileId) {
        
-       Files deletedFile = FileMapper.viewFile(fileId);
+       String deletedFile = FileMapper.getFileName(fileId);
 
        FileMapper.deleteFile(fileId); 
        
@@ -44,7 +46,7 @@ public class FileService {
    
    public void addFile(MultipartFile fileUpload, String name) throws IOException {
 
-        User userByUserName = UserMapper.getUserByUserName(name);
+        Integer userByUserName = UserMapper.getUserIdByUserName(name);
         byte[] bytes = fileUpload.getBytes();
         
         // Do not compress the file if it's of a zip file
@@ -53,7 +55,7 @@ public class FileService {
         Files build = Files.builder()
                            .fileName(fileUpload.getOriginalFilename())
                            .fileSize(fileUpload.getSize()+" KB")
-                           .userId(userByUserName.getUserid())
+                           .userId(userByUserName)
                            .fileData(bytes)
                            .contentType(fileUpload.getContentType())
                            .build();
@@ -63,12 +65,12 @@ public class FileService {
         
     }
    
-   public Files viewFile(Integer fileId) {
+   public FileDownload viewFile(Integer fileId) {
        
-        Files viewFile = FileMapper.viewFile(fileId);
+        FileDownload viewFile = FileMapper.viewFile(fileId);
         byte[] fileData = viewFile.getFileData();
         
-        fileData = viewFile.getFileName().endsWith(".zip") ? fileData : CompressionService.decompress(fileData) ;
+        fileData = viewFile.getFilename().endsWith(".zip") ? fileData : CompressionService.decompress(fileData) ;
         
         viewFile.setFileData(fileData);
         
@@ -78,8 +80,8 @@ public class FileService {
 
    public boolean isDuplicate(MultipartFile fileUpload, String name){
 
-        User userByUserName = UserMapper.getUserByUserName(name);
-        List<String> allFiles = FileMapper.getAllFilesNames(userByUserName.getUserid());
+        Integer userByUserName = UserMapper.getUserIdByUserName(name);
+        List<String> allFiles = FileMapper.getAllFilesNames(userByUserName);
         
         boolean contains = allFiles.contains(fileUpload.getOriginalFilename());
         
@@ -88,7 +90,7 @@ public class FileService {
    }
     public boolean isValidFileId(String username, Integer fileId) {
         
-        List<Files> allFiles = getAllFiles(username);
+        List<FileMetadata> allFiles = getAllFiles(username);
 
         List<Integer> fileIds = allFiles.stream()
                                         .map(file -> file.getFileId())

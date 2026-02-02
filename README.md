@@ -29,6 +29,8 @@ CloudStorage is a secure and user-friendly application for managing files, notes
 2. **File Management:**
    - Upload files to your account, with duplicate file names rejected to avoid overwriting.
    - Download or delete files directly from the dashboard.
+   - Files uploaded by users are securely associated with their accounts and accessible only to the owning user.
+   - File size validation with a maximum upload limit of 10 MB.
 3. **Note Management:**
    - Add personal notes, edit them as needed, or delete them when no longer required.
 4. **Website Credential Management:**
@@ -49,13 +51,21 @@ CloudStorage is a secure and user-friendly application for managing files, notes
 3. **Frontend Interactivity:**
    - Built with **Thymeleaf** for integration with backend data.
    - Enhanced with **JavaScript** to provide real-time feedback and interactivity.
-4. **File Storage and Management:**
-   - Files are stored and linked to the user account.
-   - Duplicate file names are rejected during the upload process for data consistency.
-   - File size greater than 10 MB are rejected for upload.
+4. **Data Access & Performance Design:**
+   - Designed MyBatis data-fetching strategies to minimize payload size (avoid loading large binary **fileData**) and optimize performance.
+   - Applied DTOs to separate concerns:
+     - FileMetadata for listing file information without loading binary data.
+     - FileDownload for retrieving file content only when users request a download.
+     - UserCredentials for authentication-specific data access.
+   - Avoided eager loading of BLOB data by using purpose-specific SQL queries for list views and download actions.
+   - Enforced user-level access control by including userid constraints in all file retrieval queries.
 5. **Validation:**
-   - Passwords must meet security patterns (minimum 8 characters, no spaces) during signup.
-   - Real-time feedback for errors such as invalid inputs or duplicate uploads.
+    - Passwords must meet security patterns (minimum 8 characters, no spaces) during signup.
+    - Real-time feedback for errors such as invalid inputs or duplicate uploads.
+##  Configuration & Deployment
+- Sensitive configuration values (such as database credentials) are externalized using environment variables.
+- This allows secure configuration across deployed environments without exposing secrets in source code.
+
  ## Contact
  - Email: kpourd@gmail.com
  - GitHub Profile: https://github.com/kiannn/CloudStorage

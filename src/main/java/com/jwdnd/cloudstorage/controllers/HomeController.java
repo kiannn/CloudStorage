@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -41,12 +42,14 @@ public class HomeController {
     public String homePage(ModelMap ModelMap, HttpServletRequest HttpServletRequest) {
 
         String referer = HttpServletRequest.getHeader("Referer");
-        System.out.println("referer in HomeController.homePage() "+referer);
-        if (referer != null && referer.contains("login")) {
-            ModelMap.remove("msg");
-        }
+        System.out.println("referer in HomeController.homePage() "+referer+ "\nshowMsg="+showMsg);
 
-        if (referer == null || (!referer.contains("home") && !referer.contains("login"))) {
+
+        /**
+         * showMsg = 'i' happens when the 'referer' URL is not null and might
+         * 'contain' home and 'login', but the access is still unauthorized
+         */
+        if (referer == null || (!referer.contains("home") && !referer.contains("login")) || Objects.equals('i', showMsg) ) {
 
             ModelMap.addAttribute("msg", "Direct access denied !");
         }
@@ -67,7 +70,12 @@ public class HomeController {
 
         ModelMap.addAllAttributes(attributes);
 
-        showMsg = 'n';
+        showMsg = 'n'; 
+        /**
+         * The feedback message (success and error, etc) should be disappeared on
+         * Home page reload. 'showMsg = 'n'' will remove 'msg' attribute from
+         * the model by calling: ModelMap.remove("msg");
+         */
         
         return "home";
     }

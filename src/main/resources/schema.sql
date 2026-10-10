@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS CREDENTIALS (
     credentialid INT PRIMARY KEY auto_increment,
     url VARCHAR(100),
     username VARCHAR(30),
-    keyenc  VARCHAR(255),             
+    iv VARCHAR(255),             
     encodedpassword VARCHAR(100), -- At the time of persist encodedpassword takes up maximum 44 chars
     userid INT,
     foreign key (userid) references USERS1(userid)

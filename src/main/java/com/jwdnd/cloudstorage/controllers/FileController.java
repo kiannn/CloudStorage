@@ -1,7 +1,6 @@
 package com.jwdnd.cloudstorage.controllers;
 
 import com.jwdnd.cloudstorage.Model.FileDownload;
-import com.jwdnd.cloudstorage.Model.Files;
 import com.jwdnd.cloudstorage.services.FileService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -55,6 +54,7 @@ public class FileController {
         }
 
         ModelMap.addAttribute("msg", msg);
+        
         HomeController.showMsg = 'y';
         
         return "redirect:"+base+"home";
@@ -79,7 +79,7 @@ public class FileController {
                                                             .body(viewFile.getFileData());
             return response;
         }
-          HomeController.showMsg = 'y';
+          HomeController.showMsg = 'i';
           
           throw new AccessDeniedException(null);
     }
@@ -101,8 +101,12 @@ public class FileController {
 
             ModelMap.addAttribute("msg", msg);
             
+            HomeController.showMsg = 'y';
+            
+            return "redirect:" + base + "home";
         }
-        HomeController.showMsg = 'y';
+        
+        HomeController.showMsg = 'i';
         
         return "redirect:" + base + "home";
 

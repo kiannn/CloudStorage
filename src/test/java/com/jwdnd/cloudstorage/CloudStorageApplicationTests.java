@@ -1,6 +1,7 @@
 package com.jwdnd.cloudstorage;
 
 import com.jwdnd.cloudstorage.Mappers.CredentialsMapper;
+import com.jwdnd.cloudstorage.services.EncryptionResult;
 import com.jwdnd.cloudstorage.services.EncryptionService;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
@@ -16,11 +17,15 @@ import java.io.File;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class CloudStorageApplicationTests {
 
 	@LocalServerPort
@@ -32,6 +37,9 @@ class CloudStorageApplicationTests {
         @Autowired
         EncryptionService EncryptionService;
         
+        @Value("${app.encryption.key}")
+        private String masterEncryptionKey;
+        
 	private WebDriver driver;
 
 	@BeforeAll
@@ -39,11 +47,46 @@ class CloudStorageApplicationTests {
 		WebDriverManager.chromedriver().setup();
 	}
 
-	@BeforeEach
-	public void beforeEach() {
-		this.driver = new ChromeDriver();
-                
-	}
+        @BeforeEach
+        public void beforeEach() {
+
+            /**
+             * What is ChromeOptions?
+             *
+             * When running Selenium test using ChromeDriver, every time a
+             * dialog page pops up displaying error from Chrome/Google Password
+             * Manager that the password your Selenium test entered appears in a
+             * known data breach. So to configure ChromeDriver to disable
+             * password-manager/password-leak detection we add these preferences
+             * by creating ChromeOptions. Then every Chrome instance opened by
+             * Selenium will be created with those settings disabled. This is
+             * preferable to manually changing the normal Chrome browser
+             * settings because ChromeDriver typically launches its own
+             * temporary browser profile. Changing your everyday Chrome profile
+             * therefore does not affect the browser launched by Selenium.
+             */
+
+            ChromeOptions options = new ChromeOptions();
+
+            Map<String, Object> prefs = new HashMap<>();
+            prefs.put("credentials_enable_service", false); // disables the Password Manager for that Chrome profile.
+            prefs.put("profile.password_manager_enabled", false); //disables the Password Manager for that Chrome profile.
+            prefs.put("profile.password_manager_leak_detection", false); // disables the breached-password detection that dispalys: "The password you just used was found in a data breach."
+
+            options.setExperimentalOption("prefs", prefs); 
+            /**
+             * ChromeOptions is ONLY used to configure Chrome/Chromium-based
+             * browsers, so this is Chrome-specific: ChromeOptions options = new
+             * ChromeOptions(), And "prefs" is also a Chrome/Chromium-specific
+             * option name, so these two (ChromeOptions and "prefs") both are
+             * specific to Chrome configuration, setExperimentalOption(...) is a
+             * Selenium ChromeOptions method. "prefs" (the first argunent) is
+             * not an arbitrary name, it means Chrome preferences. For other
+             * browsers like Firefox you would not use ChromeOptions, for
+             * Firefox, you use FirefoxOptions.
+             */
+            driver = new ChromeDriver(options);
+        }
 
 	@AfterEach
 	public void afterEach() {
@@ -66,7 +109,7 @@ class CloudStorageApplicationTests {
 		// Create a dummy account for logging in later.
 
 		// Visit the sign-up page.
-		WebDriverWait webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(2));
+		WebDriverWait webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(4));
 		driver.get("http://localhost:" + this.port + "/signup");
 		webDriverWait.until(ExpectedConditions.titleContains("Sign Up"));
 		
@@ -96,6 +139,7 @@ class CloudStorageApplicationTests {
 		WebElement buttonSignUp = driver.findElement(By.id("buttonSignUp"));
 		buttonSignUp.click();
 
+                webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("success-msg")));
 		Assertions.assertTrue(driver.findElement(By.id("success-msg")).getText().contains("You successfully signed up!"));
 	}
 
@@ -106,7 +150,7 @@ class CloudStorageApplicationTests {
 	private void doLogIn(String userName, String password){
 		// Log in to our dummy account.
 		driver.get("http://localhost:" + this.port + "/login");
-		WebDriverWait webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(2));
+		WebDriverWait webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(4));
 
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputUsername")));
 		WebElement loginUserName = driver.findElement(By.id("inputUsername"));
@@ -155,8 +199,8 @@ class CloudStorageApplicationTests {
         doLogIn("LFT", "123456789");
 
         // Try to upload an arbitrary large file
-        WebDriverWait webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(3));
-        String fileName = "15MB.zip";
+        WebDriverWait webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(4));
+        String fileName = "sample-10mb.zip";
 
         webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("fileUpload")));
         WebElement fileSelectButton = driver.findElement(By.id("fileUpload"));
@@ -171,7 +215,7 @@ class CloudStorageApplicationTests {
         Assertions.assertTrue(driver.findElement(By.id("success")).getText().contains("uploaded successfully !"));
 
         //Verify if uploaded file’s name displays on the files table
-        Assertions.assertEquals("15MB.zip", driver.findElement(By.cssSelector("tr.fileItems th")).getText());
+        Assertions.assertEquals("sample-10mb.zip", driver.findElement(By.cssSelector("tr.fileItems th")).getText());
 
         Assertions.assertFalse(driver.getPageSource().contains("HTTP Status 403 – Forbidden"));
 
@@ -220,7 +264,7 @@ class CloudStorageApplicationTests {
         Assertions.assertTrue(driver.getPageSource().contains("id=\"nav-notes\""));
         Assertions.assertTrue(driver.getPageSource().contains("id=\"nav-credentials\""));
         
-        WebDriverWait webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(2));
+        WebDriverWait webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(4));
         webDriverWait.until(webDriver -> webDriver.findElement(By.id("logout-button")));      
         
         // Attempt to logout
@@ -260,7 +304,7 @@ class CloudStorageApplicationTests {
         Assertions.assertEquals("http://localhost:" + this.port + "/home", driver.getCurrentUrl()); 
         Assertions.assertEquals("Home",driver.getTitle());
         
-        WebDriverWait webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(3));
+        WebDriverWait webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(4));
 
         //Click on note tab
         webDriverWait.until(webDriver -> webDriver.findElement(By.id("nav-notes-tab")));    
@@ -386,7 +430,7 @@ class CloudStorageApplicationTests {
         Assertions.assertEquals("http://localhost:" + this.port + "/home", driver.getCurrentUrl()); 
         Assertions.assertEquals("Home",driver.getTitle());
         
-        WebDriverWait webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(3));
+        WebDriverWait webDriverWait = new WebDriverWait(driver, Duration.ofSeconds(4));
 
         //Click on credentials tab
         webDriverWait.until(webDriver -> webDriver.findElement(By.id("nav-credentials-tab")));    
@@ -441,20 +485,20 @@ class CloudStorageApplicationTests {
          List<String> SavedUsernames = CredentialsPage.getSavedCredentialsUsernames();
          
         // Retrieve all encrypted passwords from credentials table
-        List<String> SavedEncodedPasswords = CredentialsPage.getSavedCredentialsEncodedPasswords();
+        List<String> SavedEncryptedPasswords = CredentialsPage.getSavedCredentialsEncodedPasswords();
      
-    /************ Encode each actual password with the same encoded key stored in database **********/
+    /************ Decrypt each saved password shown on the table with its associated iv stored in database **********/
     
-         List<String> allActualEncryptedPasswords = new ArrayList<>();
+         List<String> allDecrypted_SavedEncryptedPasswords = new ArrayList<>();
         
         //Ids of created credentials
          Integer[] Ids = {1, 2, 3};
           
-        // Retrieve each encoded key stored in databsse and encode the actual passwords
+        // Retrieve each iv stored in the database and decrypt the associated encrypted password shown on the table
           for (int id : Ids) {
-              String keyEnc = CredentialsMapper.findCredentialByID(id).getKeyEnc();
-              String encryptValue = EncryptionService.encryptValue(allActualUnencryptedPasswords.get(id - 1), keyEnc);
-              allActualEncryptedPasswords.add(encryptValue);
+              String iv = CredentialsMapper.findCredential_Iv_ById(id);
+              String encryptValue = EncryptionService.decryptValue(SavedEncryptedPasswords.get(id - 1), masterEncryptionKey, iv);
+              allDecrypted_SavedEncryptedPasswords.add(encryptValue);
           }
           
     /***************************************************************************/
@@ -464,8 +508,8 @@ class CloudStorageApplicationTests {
         Assertions.assertEquals(allActualURLs, savedURLs);
         Assertions.assertEquals(allActualUsernams, SavedUsernames);
         
-        // Verify displayed password on the table is encrypted and has the same encrypted value stored in databse
-        Assertions.assertEquals(allActualEncryptedPasswords, SavedEncodedPasswords);
+        // Verify decrypted version of the password displayed on the table is the same as the actuall original password
+        Assertions.assertEquals(allActualUnencryptedPasswords, allDecrypted_SavedEncryptedPasswords);
         
         
         /***********************************
@@ -501,18 +545,18 @@ class CloudStorageApplicationTests {
          SavedUsernames = CredentialsPage.getSavedCredentialsUsernames();
         
         // Retrieve all encrypted passwords from credentials table after edit
-         SavedEncodedPasswords = CredentialsPage.getSavedCredentialsEncodedPasswords();
+         SavedEncryptedPasswords = CredentialsPage.getSavedCredentialsEncodedPasswords();
          
-        /************ Encode each actual password with the same encoded key stored in database **********/
+        /************ Decrypt each saved password shown on the table with its associated iv stored in database **********/
         
-        allActualEncryptedPasswords = new ArrayList<>();
+        allDecrypted_SavedEncryptedPasswords = new ArrayList<>();
         
         // Ids of created credentials remains unchanged after edit
-        // Retrieve each encoded key stored in databsse and encode the actual passwords
+        // Retrieve each iv stored in the database and decrypt the associated encrypted password shown on the table
           for (int id : Ids) {
-              String keyEnc = CredentialsMapper.findCredentialByID(id).getKeyEnc();
-              String encryptValue = EncryptionService.encryptValue(allActualUnencryptedPasswords.get(id - 1), keyEnc);
-              allActualEncryptedPasswords.add(encryptValue);
+              String iv = CredentialsMapper.findCredential_Iv_ById(id);
+              String encryptValue = EncryptionService.decryptValue(SavedEncryptedPasswords.get(id - 1), masterEncryptionKey, iv);
+              allDecrypted_SavedEncryptedPasswords.add(encryptValue);
           }
          
         /***********************************************************************/
@@ -522,8 +566,8 @@ class CloudStorageApplicationTests {
         Assertions.assertEquals(allActualURLs, savedURLs);
         Assertions.assertEquals(allActualUsernams, SavedUsernames);
         
-        // Verify displayed password on the table after edit is encrypted and has the same encrypted value stored in databse
-        Assertions.assertEquals(allActualEncryptedPasswords, SavedEncodedPasswords);
+        // Verify decrypted version of the password displayed on the table is the same as the actuall original password
+        Assertions.assertEquals(allActualUnencryptedPasswords, allDecrypted_SavedEncryptedPasswords);
 
         /*************************************
          * Delete a credential at a chosen row
@@ -553,20 +597,20 @@ class CloudStorageApplicationTests {
          SavedUsernames = CredentialsPage.getSavedCredentialsUsernames();
         
         // Retrieve all encrypted passwords from credentials table after delete
-         SavedEncodedPasswords = CredentialsPage.getSavedCredentialsEncodedPasswords();
+         SavedEncryptedPasswords = CredentialsPage.getSavedCredentialsEncodedPasswords();
          
-        /************ Encode each actual password with the same encoded key stored in database **********/
+        /************ Decrypt each saved password shown on the table with its associated iv stored in database **********/
             
-         allActualEncryptedPasswords = new ArrayList<>();
+         allDecrypted_SavedEncryptedPasswords = new ArrayList<>();
         
         //Ids of created credentials after delete
           Ids = new Integer[]{1, 2};
           
-        // Retrieve each encoded key stored in databsse and encode the actual passwords
+        // Retrieve each iv stored in the database and decrypt the associated encrypted password shown on the table
           for (int id : Ids) {
-              String keyEnc = CredentialsMapper.findCredentialByID(id).getKeyEnc();
-              String encryptValue = EncryptionService.encryptValue(allActualUnencryptedPasswords.get(id - 1), keyEnc);
-              allActualEncryptedPasswords.add(encryptValue);
+              String iv = CredentialsMapper.findCredential_Iv_ById(id);
+              String encryptValue = EncryptionService.decryptValue(SavedEncryptedPasswords.get(id - 1), masterEncryptionKey, iv);
+              allDecrypted_SavedEncryptedPasswords.add(encryptValue);
           }
           
         /***********************************************************************/  
@@ -576,8 +620,8 @@ class CloudStorageApplicationTests {
         Assertions.assertEquals(allActualURLs, savedURLs);
         Assertions.assertEquals(allActualUsernams, SavedUsernames);
         
-        // Verify displayed password on the table after delete is encrypted and has the same encrypted value stored in databse
-        Assertions.assertEquals(allActualEncryptedPasswords, SavedEncodedPasswords);
+        // Verify decrypted version of the password displayed on the table is the same as the actuall original password
+        Assertions.assertEquals(allActualUnencryptedPasswords, allDecrypted_SavedEncryptedPasswords);
  
     }
 }

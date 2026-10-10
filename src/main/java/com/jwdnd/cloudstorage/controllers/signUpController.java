@@ -29,7 +29,7 @@ public class signUpController {
     @PostMapping
     public String signUpProcess(@ModelAttribute("us")User User, ModelMap ModelMap) {
      
-        System.out.println("getFirstName()" + User.getFirstName());
+        System.out.println("\nsignUpProcess:\ngetFirstName()" + User.getFirstName());
         System.out.println("getLastName()" + User.getLastName());
         System.out.println("getPassword()" + User.getPassword());
         System.out.println("getSalt()" + User.getSalt());

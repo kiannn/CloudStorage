@@ -10,5 +10,5 @@ public class FileMetadata {
     Integer fileId;
     String fileName;
     String fileSize;
-
+ 
 }

@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,6 +24,9 @@ public class CredentialService {
     
     @Autowired
     private CredentialsMapper CredentialsMapper;
+    
+    @Value("${app.encryption.key}")
+    private String masterEncryptionKey;
             
     public List<Credentials> getAllCredentials(String user) {
 
@@ -31,7 +35,8 @@ public class CredentialService {
         List<Credentials> allCredential = CredentialsMapper.findAllCredentials(userByUserName);
 
         allCredential.forEach(cred -> {
-            String decryptValue = EncryptionService.decryptValue(cred.getEncodedPassword(), cred.getKeyEnc());
+            
+            String decryptValue = EncryptionService.decryptValue(cred.getEncodedPassword(), masterEncryptionKey, cred.getIv());
 
             cred.setPassword(decryptValue);
 
@@ -64,12 +69,10 @@ public class CredentialService {
 
         String password = Credentials.getPassword();
 
-        String generatedEncodedKey = generateEncodedKey();
+        EncryptionResult encryptedPassword = EncryptionService.encryptValue(password, masterEncryptionKey);
 
-        String encryptedPassword = EncryptionService.encryptValue(password, generatedEncodedKey);
-
-        Credentials.setEncodedPassword(encryptedPassword);
-        Credentials.setKeyEnc(generatedEncodedKey);
+        Credentials.setEncodedPassword(encryptedPassword.getEncryptedValue());
+        Credentials.setIv(encryptedPassword.getIv());
 
         CredentialsMapper.updateCredential(Credentials);
 
@@ -80,30 +83,18 @@ public class CredentialService {
         Integer userByUserName = UserMapper.getUserIdByUserName(name);
         
         String password = Credentials.getPassword();
-        String generatedEncodedKey = generateEncodedKey();
         
-        String encryptedPassword = EncryptionService.encryptValue(password, generatedEncodedKey);
+        EncryptionResult encryptedPassword = EncryptionService.encryptValue(password, masterEncryptionKey);
         
         Credentials build = Credentials.builder()
                                        .url(Credentials.getUrl())
                                        .username(Credentials.getUsername())
-                                       .encodedPassword(encryptedPassword)
-                                       .keyEnc(generatedEncodedKey)
+                                       .encodedPassword(encryptedPassword.getEncryptedValue())
+                                       .iv(encryptedPassword.getIv())
                                        .userId(userByUserName)
                                        .build();
  
         CredentialsMapper.addCredential(build);
 
     }
-
-    public String generateEncodedKey() {
-        
-        SecureRandom random = new SecureRandom();
-        byte[] key = new byte[16];
-        random.nextBytes(key);
-        String encodedKey = Base64.getEncoder().encodeToString(key);
-
-        return encodedKey;
-    }
-
 }

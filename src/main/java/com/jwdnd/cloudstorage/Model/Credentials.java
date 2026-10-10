@@ -5,9 +5,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Setter
 @Getter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -18,7 +20,7 @@ public class Credentials {
     String username;
     String encodedPassword ;
     String password ;
-    String keyEnc;
+    String iv;
     Integer userId ;
     
     

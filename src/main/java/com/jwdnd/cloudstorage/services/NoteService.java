@@ -4,7 +4,6 @@ package com.jwdnd.cloudstorage.services;
 import com.jwdnd.cloudstorage.Mappers.NotesMapper;
 import com.jwdnd.cloudstorage.Mappers.UserMapper;
 import com.jwdnd.cloudstorage.Model.Notes;
-import com.jwdnd.cloudstorage.Model.User;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +54,7 @@ public class NoteService {
         NotesMapper.updateNote(Notes);
     }  
 
-    public boolean isValidFileId(String username, Integer noteId) {
+    public boolean isValidNote(String username, Integer noteId) {
 
         List<Notes> allNotes = getAllNotes(username);
 

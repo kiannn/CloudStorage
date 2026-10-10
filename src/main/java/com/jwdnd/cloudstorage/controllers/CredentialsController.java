@@ -64,9 +64,12 @@ public class CredentialsController {
             msg = "credential is successfully deleted !";
             ModelMap.addAttribute("msg", msg);
 
+            HomeController.showMsg = 'y';
+            
+            return "redirect:" + base + "home";
         }
 
-        HomeController.showMsg = 'y';
+        HomeController.showMsg = 'i';
 
         return "redirect:" + base + "home";
     }

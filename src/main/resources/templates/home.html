@@ -58,6 +58,13 @@
             padding-bottom: 5px;
             padding-top: 3px;
         }
+        #encoded-password {
+            display: block;          /* The element becomes a block-level box, so we are able to apply properties like width/max-width /min-width to the element normally */
+            max-width: 400px;        /* Prevents that box element from becoming wider than 400 pixels.*/
+            white-space: nowrap;     /* Prevents the password from wrapping onto a second line.*/
+            overflow: hidden;        /* Hides the part of the password that does not fit inside the 400px pixels.*/
+            text-overflow: ellipsis; /* Tells the browser: when text is hidden because it overflows, show ... at the end.*/
+        }
         @media(max-width :768px){ /*overrides the .cred-note-Div-for-waiteMsg styles when device width is 768px or less */
             .cred-note-Div-for-waiteMsg{
                 font-size: 13.5px;
@@ -135,6 +142,12 @@
                                 <tbody>
                                 <tr class="fileItems" th:each="file : ${userFiles}">
                                     <td>
+                                        <!-- EDIT: change ids to classes
+                                            You are using the same id on multiple elements: id="deleteFileButton"   id="viewFileButton"
+                                            IDs should be unique in a page. Since these <a>s are repeated in each row, they should really be classes: 
+                                            <a ... class="btn btn-danger deleteFileButton">Delete</a>
+                                            <a ... class="btn btn-success viewFileButton">View</a>
+                                        -->
                                         <a target="_blank" th:href="${'/files/viewfile/'+file.fileId}" th:download="${file.fileName}" class="btn btn-success" style="padding-left: 17px; padding-right: 17px" id="viewFileButton">View</a>
                                         <a th:href="${'/files/deletefile/'+file.fileId}" class="btn btn-danger"  id="deleteFileButton">Delete</a>
                                     </td>
@@ -233,7 +246,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <tr class="CredItems" th:each="cred : ${userCredentials}" th:with="length=${50}, len=${30}">
+                                <tr class="CredItems" th:each="cred : ${userCredentials}" th:with="length=${50}">
                                     <td class="CredEditButtom">
                                         <button type="button" 
                                                 class="btn btn-success" style="padding-left: 20px; padding-right: 20px"
@@ -244,8 +257,7 @@
                                     <th scope="row" th:if="${cred.url.length()<length}"th:text="${cred.url}"></th>
                                     <th scope="row" th:unless="${cred.url.length()<length}"th:text="${cred.url.substring(0,length)+'...'}"></th>
                                     <td id="credUsername" th:text="${cred.username}"></td>
-                                    <td id="encoded-password" th:if="${cred.encodedPassword.length()<len}" th:text="${cred.encodedPassword}"></td>
-                                    <td id="encoded-password" th:unless="${cred.encodedPassword.length()<len}" th:text="${cred.encodedPassword.substring(0,len)+'...'}"></td>
+                                    <td id="encoded-password"  th:text="${cred.encodedPassword}"></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -374,7 +386,9 @@
             const viewFileButton = document.querySelectorAll('#viewFileButton');
             const waitUploadMessage = document.getElementById('waitUploadMessage');
             const file_Upload = document.getElementsByName('fileUpl');
-            uploadForm.addEventListener('submit', function () { // If instead of uploadForm.addEventListener('submit', function (){}) 
+            uploadForm.addEventListener('submit', function () { 
+                                                                // The event listener (submit event) runs first, then the form submission happens.
+                                                                // If instead of uploadForm.addEventListener('submit', function (){}) 
                                                                 // we use uploadButton.addEventListener('submit', function (){})
                                                                 // which applies 'submit' event on the submit button instead of the form element
                                                                 // then addEventListener will not work.
@@ -382,7 +396,7 @@
                 disableUploadElements('upload');
              });
               
-            deleteFileButton.forEach((deleteb)=> deleteb.addEventListener('click', function () {
+            deleteFileButton.forEach((deleteb)=> deleteb.addEventListener('click', function () { // The event listener (click event) runs first, then the GET request (at the <a> href) also happens.
  
                 disableUploadElements('del');
             }));

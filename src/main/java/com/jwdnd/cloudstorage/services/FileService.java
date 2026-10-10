@@ -5,7 +5,6 @@ import com.jwdnd.cloudstorage.Mappers.UserMapper;
 import com.jwdnd.cloudstorage.Model.FileDownload;
 import com.jwdnd.cloudstorage.Model.FileMetadata;
 import com.jwdnd.cloudstorage.Model.Files;
-import com.jwdnd.cloudstorage.Model.User;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,6 +67,7 @@ public class FileService {
    public FileDownload viewFile(Integer fileId) {
        
         FileDownload viewFile = FileMapper.viewFile(fileId);
+        System.out.println("\nviewFile = "+viewFile);
         byte[] fileData = viewFile.getFileData();
         
         fileData = viewFile.getFilename().endsWith(".zip") ? fileData : CompressionService.decompress(fileData) ;

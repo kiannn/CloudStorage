@@ -54,7 +54,7 @@ public class NotesController {
     public String deletNotes(@PathVariable Integer noteId, ModelMap ModelMap, HttpServletRequest r) {
 
         String name = (String) ModelMap.getAttribute("authorizedUser");
-        boolean validFileId = NoteService.isValidFileId(name, noteId);
+        boolean validFileId = NoteService.isValidNote(name, noteId);
 
         boolean reject = r.getHeader("Referer") == null || !r.getHeader("Referer").contains("home");
 
@@ -64,9 +64,13 @@ public class NotesController {
             msg = "note title  " + deleteNotes.getNoteTitle() + "  is successfully deleted !";
             ModelMap.addAttribute("msg", msg);
 
+            HomeController.showMsg = 'y';
+
+            return "redirect:" + base + "home";
         }
-        HomeController.showMsg = 'y';
-        
+
+        HomeController.showMsg = 'i';
+
         return "redirect:" + base + "home";
     }
 

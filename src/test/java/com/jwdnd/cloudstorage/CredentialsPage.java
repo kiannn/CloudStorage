@@ -172,7 +172,7 @@ public class CredentialsPage {
     
     public List<String> getSavedCredentialsURLs() {
         
-        webDriverWait.until(webDriver -> webDriver.findElement(By.cssSelector("tr.CredItems")));
+        webDriverWait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("tr.CredItems th")));
         List<String> titles = allCredURLs.stream().map(cred->cred.getText()).collect(Collectors.toList());
         
         return titles;

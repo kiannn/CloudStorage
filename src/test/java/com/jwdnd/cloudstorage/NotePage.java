@@ -85,7 +85,7 @@ WebDriver driver;
 
     public List<String> getSavedNotesTitles() {
         
-        webDriverWait.until(webDriver -> webDriver.findElement(By.cssSelector("tr.noteItems th")));
+        webDriverWait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("tr.noteItems th")));
         List<String> titles = allNoteTitles.stream().map(note->note.getText()).collect(Collectors.toList());
         
         return titles;

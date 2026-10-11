@@ -271,6 +271,8 @@ class CloudStorageApplicationTests {
         WebElement logoutButton = driver.findElement(By.id("logout-button"));
 	logoutButton.click();
         
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.className("alert-warning")));
+        
         // Verify that we have been redirected to Login page after logout 
         Assertions.assertEquals("http://localhost:" + this.port + "/login?logout", driver.getCurrentUrl());
         Assertions.assertTrue(driver.getPageSource().contains("You have been logged out"));
@@ -278,7 +280,7 @@ class CloudStorageApplicationTests {
         
         // Attempt to RE-ACCESS Home page after logout
         driver.get("http://localhost:" + this.port + "/home");
-        webDriverWait.until(webDriver -> webDriver.findElement(By.id("inputUsername")));
+//        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("inputUsername")));
         
         // Verify that Home page is no longer accessible after logout
         Assertions.assertNotEquals("http://localhost:" + this.port + "/home", driver.getCurrentUrl()); 
@@ -333,6 +335,7 @@ class CloudStorageApplicationTests {
         NotePage.add_and_Save_Notes(titles_descriptions); 
         
         //Check if success message displays after note create
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("success"))); 
         Assertions.assertTrue(driver.findElement(By.id("success")).getText().contains("successfully created !"));
         
         // Check if titles shown on edit modal box are the same as actual ones
@@ -373,6 +376,7 @@ class CloudStorageApplicationTests {
         NotePage.edit_and_Save_Note(rowNumber, titles_descriptions.get(rowNumber-1)[0], titles_descriptions.get(rowNumber-1)[1]); 
 
         //Check if success message displays after note edit
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("success")));
         Assertions.assertTrue(driver.findElement(By.id("success")).getText().contains("successfully edited !"));
         
         //Retrieve all titles from note table after edit
@@ -464,6 +468,7 @@ class CloudStorageApplicationTests {
         CredentialsPage.AddCredentials(urls_username_password);
         
         // Check if success message displays after credential create
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("success")));
         Assertions.assertTrue(driver.findElement(By.id("success")).getText().contains("credential is successfully created !"));
         
         // Check if URLs shown on edit modal box are the same as actual ones
@@ -536,6 +541,7 @@ class CloudStorageApplicationTests {
                                                    urls_username_password.get(rowNumber-1)[2]);
         
         // Check if success message displays after credential edit
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("success")));
         Assertions.assertTrue(driver.findElement(By.id("success")).getText().contains("credential is successfully edited !"));
         
         // Retrieve all urls from credentials table after edit
